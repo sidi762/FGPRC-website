@@ -17,7 +17,7 @@ $var['error_email_address'] = ""; /*set your email here in order to receive erro
 $var['postgre_conn']['host'] = ""; /*(Linux only: empty sting for using unix socket*/
 $var['postgre_conn']['port'] = 5432; /*(Linux only: lgnored if using unix socket*/
 $var['postgre_conn']['desc'] = "AC-VSERVER";
-$var['postgre_conn']['uname'] = "postgres";
-$var['postgre_conn']['pass'] = "";
+$var['postgre_conn']['uname'] = "fgtracker";
+$var['postgre_conn']['pass'] = "fgprctracker";
 $var['postgre_conn']['db'] = "fgtracker";
 ?>
