@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Infinite Flight吧 航空公司备案查询页</title>
+    <script type="text/javascript">
+	function clear() {
+		document.getElementById("yyz1").value = "";
+		document.getElementById("yyz3").value = "";
+	}
+
+	function calculate() {	
+		$con = mysql_connect("165.227.255.237:3306","IFPRC","Ifprc_passwd123");
+		if (!$con){
+  		die('Could not connect: ' . mysql_error());
+		} else {
+   		mysql_select_db("IFVADB", $con);
+
+			$result = mysql_query("SELECT * FROM info WHERE ID = yyz1");    
+ 			while($row = mysql_fetch_array($result)){
+  			echo $row['ID'] . " " . $row['Name'];
+  			echo "<br />";
+  	}
+}
+
+    </script>
+  </head>
+  <body>
+    <table width="100%">
+      <tbody>
+        <tr>
+          <td align="center"> <font size="6" color="blue">Infinite Flight吧航空备案查询网站ALPHA4</font></td>
+        </tr>
+        <tr>
+          <td align="center"> <input type="text" id="yyz1" onkeyup="value="/> 
+            <input value="确认查询" onclick="calculate()" type="button"/> 
+            <input value="清除" onclick="clear()" type="button"/> 
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <a href="http://www.ifmu.top/xia.html">C-Plane下载</a>
+    <!--请不要删除PHP文件，这个文件很重要，版权所有 ，高飞 、舟山-->
+    
+    <div style="text-align:center; width:100%; hight:1dp;">
+      <font size="0.1" color="blanck">测试页面<br><br></font> 
+    </div>
+    <style>
+
+.box{width:360px; text-align:center; font-szie:1px;}
+
+.box img {width:10%;}
+
+</style>
+</body>
+</html>

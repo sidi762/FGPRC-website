@@ -1,0 +1,12 @@
+DROP TABLE IF EXISTS `downloadkeys`;
+
+CREATE TABLE `downloadkeys` (
+  `uniqueid` varchar(12) NOT NULL default '',
+  `timestamp` INT UNSIGNED,
+  `lifetime` INT UNSIGNED,
+  `maxdownloads` SMALLINT UNSIGNED, 
+  `downloads` SMALLINT UNSIGNED default '0',
+  `filename` varchar(60) NOT NULL default '',
+  `note` varchar(255) NOT NULL default '',
+  PRIMARY KEY (uniqueid)
+);

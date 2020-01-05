@@ -1,0 +1,263 @@
+
+<!DOCTYPE html>
+<title>Dead-Reckoning Calculator by Ice Guye</title>
+<meta charset="UTF-8">
+
+        <script>
+        /*    
+        @licstart  The following is the entire license notice for the 
+        JavaScript code in this page.
+
+        Copyright (C) 2015 Bo Lan and IceGuye
+
+        The JavaScript code in this page is free software: you can
+        redistribute it and/or modify it under the terms of the GNU
+        General Public License (GNU GPL) as published by the Free Software
+        Foundation, either version 3 of the License, or (at your option)
+        any later version.  The code is distributed WITHOUT ANY WARRANTY;
+        without even the implied warranty of MERCHANTABILITY or FITNESS
+        FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+        As additional permission under GNU GPL version 3 section 7, you
+        may distribute non-source (e.g., minimized or compacted) forms of
+        that code without the copy of the GNU GPL normally required by
+        section 4, provided you include this license notice and a URL
+        through which recipients can access the Corresponding Source.   
+
+
+        @licend  The above is the entire license notice
+        for the JavaScript code in this page.
+        */
+        </script>
+
+
+<script>
+var counter = 2;
+var forked =1;
+var transport_wander = [0,0];
+var earth_rate_array =[0,0];
+var lat_nut_array = [0,0];
+var atw = [0,0];
+var aer = [0,0];
+var aln = [0,0];
+
+function addInput(divName){
+     var imperial = document.getElementById("imperial-units");
+     var newdiv = document.createElement('div');
+     newdiv.id = "pointDiv"+counter;
+
+     if (imperial.checked!=true) {
+         newdiv.innerHTML = " <br>S: <span id='dis"+(counter)+"'>0.00</span><span id='unit-s"+(counter)+"'> km</span> TC: <span id='true_course"+(counter)+"'>000.0</span> CC: <span id='c_true_course"+(counter)+"'>000.0</span> Transport Wander: <span id='tw"+(counter)+"'>000.0</span> Earth Rate: <span id='er"+(counter)+"'>000.0</span>  Mean Lat: <span id='mean_lat"+(counter)+"'>00.0</span> Lat Nut: <span id='ln"+(counter)+"'>000.0</span> MC: <span id='mag_course"+(counter)+"'>000.0</span> <br>When to adjust lat nut：<span id='multi_lat"+(counter)+"'>N/A</span><br> <br> Way Point " + (counter) + "<br> Lat: " + "<input type='text' id='lat"+(counter)+"'> Lon: " + "<input type='text'  id='lon"+(counter)+"'>  Lat Nut: <input type='text' id='latnut"+(counter)+"'> GS: <input type='text' id='gs"+(counter)+"'><span id='unit-gs"+(counter)+"'> km/h</span>";
+     } else {
+         newdiv.innerHTML = " <br>S: <span id='dis"+(counter)+"'>0.00</span><span id='unit-s"+(counter)+"'> nm</span> TC: <span id='true_course"+(counter)+"'>000.0</span> CC: <span id='c_true_course"+(counter)+"'>000.0</span> Transport Wander: <span id='tw"+(counter)+"'>000.0</span> Earth Rate: <span id='er"+(counter)+"'>000.0</span> Mean Lat: <span id='mean_lat"+(counter)+"'>00.0</span> Lat Nut: <span id='ln"+(counter)+"'>000.0</span> MC: <span id='mag_course"+(counter)+"'>000.0</span> <br>When to adjust lat nut：<span id='multi_lat"+(counter)+"'>N/A</span><br><br> Way Point " + (counter) + "<br> Lat: " + "<input type='text' id='lat"+(counter)+"'> Lon: " + "<input type='text'  id='lon"+(counter)+"'>  Lat Nut: <input type='text' id='latnut"+(counter)+"'> GS: <input type='text' id='gs"+(counter)+"'><span id='unit-gs"+(counter)+"'> knots</span>";
+     }
+        
+     document.getElementById(divName).appendChild(newdiv);
+     counter++;
+}
+
+function delPoint() {
+    var elem = document.getElementById(("pointDiv"+(counter-1)));
+    elem.remove();
+    counter = counter - 1;
+    transport_wander = [0,0];
+    earth_rate_array =[0,0];
+    lat_nut_array = [0,0];
+    atw = [0,0];
+    aer = [0,0];
+    aln = [0,0];
+}
+
+
+
+function cal() {
+
+    var R=6371; // km
+        for (i=2;i<=counter;i++){
+            var imperial = document.getElementById("imperial-units");
+            var multi_lat = document.getElementById("multi-lat-nut-check");
+	    var lat1 = parseFloat(document.getElementById("lat"+(i-1)).value);
+	    var lon1 = parseFloat(document.getElementById("lon"+(i-1)).value);
+            var lat2 = parseFloat(document.getElementById("lat"+(i)).value);
+            var lon2 = parseFloat(document.getElementById("lon"+(i)).value);
+            var rad_lat1 = lat1 * (Math.PI / 180);		      
+            var rad_lat2 = lat2 * (Math.PI / 180);
+            var delta_lat = (lat2 - lat1) * (Math.PI / 180);
+            var delta_lon = (lon2 - lon1) * (Math.PI / 180);
+            var dmv =  parseFloat(document.getElementById("dmv").value);
+            var amv =  parseFloat(document.getElementById("amv").value);
+            var gs = parseFloat(document.getElementById("gs"+(i)).value);
+            var lat_nut_input = parseFloat(document.getElementById("latnut"+(i)).value);
+			      
+            var a = Math.sin(delta_lat/2) *  Math.sin(delta_lat/2) + Math.cos(rad_lat1) * Math.cos(rad_lat2) * Math.sin(delta_lon/2) * Math.sin(delta_lon/2);
+            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            var d = R * c;
+
+            if (imperial.checked==true) {
+                d = d * 0.53996;
+            }
+			  
+            var y = Math.sin(delta_lon) * Math.cos(rad_lat2);
+            var x = Math.cos(rad_lat1) * Math.sin(rad_lat2) - Math.sin(rad_lat1) * Math.cos(rad_lat2) * Math.cos(delta_lon);
+            var brng = Math.atan2(y, x) * (180 / Math.PI);
+            brng = (brng + 360) %360;
+            var sum_lat = 0;
+            var mean_lat = 0;
+            var earth_rate = 0;
+            var lat_nut = 0;
+            var for_dj_count = 0;
+            var change_lat_point = [];
+            var change_lat_point1 = lat1;
+            var change_lat_point2 = lat1;
+            var earth_rate_correction = 0;
+            if (multi_lat.checked) {
+                gs = 99999;
+            }
+            for (var dj = 0; dj <= d; dj = dj + 0.001) {
+                for_dj_count++;
+                var tem_lat = Math.asin(Math.sin(rad_lat1)*Math.cos(dj/R)+Math.cos(rad_lat1)*Math.sin(dj/R)*Math.cos(brng * (Math.PI/180)));
+                var tem_er =   -(15 * Math.sin(tem_lat) * (0.001 / gs));
+                var tem_ln = 15 * Math.sin(lat_nut_input * (Math.PI / 180)) * (0.001 / gs);
+                earth_rate_correction = earth_rate_correction + ((tem_er + tem_ln)/2);
+                
+                if (multi_lat.checked) {
+                var decimal_tem_lat = Math.abs((tem_lat*180/Math.PI))%1; 
+                decimal_tem_lat = decimal_tem_lat.toFixed(1);
+                if (decimal_tem_lat == 0.5) {
+                    change_lat_point2 = (tem_lat*180/Math.PI).toFixed(1);
+                    if ((change_lat_point2 - change_lat_point1)>0.001 && dj>=0.1) {
+                         if (imperial.checked) {
+                             change_lat_point.push(" " + (d-dj).toFixed(0) + "nm("+(tem_lat*180/Math.PI+0.5).toFixed(0)+")");
+                         } else {
+                             change_lat_point.push(" " + (d-dj).toFixed(0) + "km("+(tem_lat*180/Math.PI+0.5).toFixed(0)+")");
+                        }
+                    }
+                    if ((change_lat_point2 - change_lat_point1)<-0.001 && dj>=0.1) {
+                         change_lat_point2 = (tem_lat*180/Math.PI).toFixed(1);
+                         if (imperial.checked) {
+                             change_lat_point.push(" " + (d-dj).toFixed(0) + "nm("+(tem_lat*180/Math.PI-0.5).toFixed(0)+")");
+                         } else {
+                             change_lat_point.push(" " + (d-dj).toFixed(0) + "km("+(tem_lat*180/Math.PI-0.5).toFixed(0)+")");
+                        }
+                    }
+                    change_lat_point1 = (tem_lat*180/Math.PI).toFixed(1);
+                }
+                }
+
+                earth_rate = earth_rate + tem_er;
+                lat_nut = lat_nut + tem_ln;
+                sum_lat = sum_lat + tem_lat;
+                mean_lat = sum_lat / for_dj_count;
+            }
+
+                if (multi_lat.checked) {
+                    lat_nut = -earth_rate;
+                    earth_rate_correction = 0;
+                }
+ 
+            if ((lon2-lon1)>180){
+                var diff_lon = (lon2-180) - (lon1+180);
+            } else if ((lon2-lon1)<-180) {
+                var diff_lon = (180+lon2) + (180-lon1);
+            } else {
+                var diff_lon = lon2 - lon1;
+            }
+
+             var tdelta_lon = (lon1 - lon2) * (Math.PI / 180);
+             var ty = Math.sin(tdelta_lon) * Math.cos(rad_lat1);
+             var tx = Math.cos(rad_lat2) * Math.sin(rad_lat1) - Math.sin(rad_lat2) * Math.cos(rad_lat1) * Math.cos(tdelta_lon);
+             var tbrng = (Math.atan2(ty, tx) * (180 / Math.PI));
+                 tbrng = (tbrng + 360) %360;
+             if (tbrng < 180) {
+                 var tw = brng - (tbrng + 180);
+             } else {
+                 var tw = brng - (tbrng - 180);
+             }
+            tw = tw%360;
+            var cbrng = brng;
+
+            earth_rate_array[i] = earth_rate;
+            aer[i]=aer[i-1]+ earth_rate_array[i];
+
+            lat_nut_array[i] = lat_nut;
+            aln[i]=aln[i-1]+lat_nut_array[i];
+
+            transport_wander[i] = tw;
+            atw[i]=atw[i-1]+transport_wander[i];
+
+
+            if(i>2){
+                cbrng = brng + atw[i-1] + aer[i-1] + aln[i-1] + earth_rate_correction;
+            } else {
+                cbrng = brng + earth_rate_correction;
+            };
+
+            brng = (brng+360)%360;
+            cbrng = (cbrng+360)%360;
+            var mc = (cbrng + dmv + 360)%360;
+
+            document.getElementById("dis"+(i)).innerHTML = d.toFixed(1);
+            document.getElementById("true_course"+(i)).innerHTML = brng.toFixed(1);
+            document.getElementById("c_true_course"+(i)).innerHTML = cbrng.toFixed(1);
+            document.getElementById("tw"+(i)).innerHTML = atw[i].toFixed(1);
+            document.getElementById("er"+(i)).innerHTML = aer[i].toFixed(1);
+            document.getElementById("ln"+(i)).innerHTML = aln[i].toFixed(1);
+            document.getElementById("mag_course"+(i)).innerHTML = parseFloat(mc).toFixed(1);
+            document.getElementById("mean_lat"+(i)).innerHTML = parseFloat(mean_lat * (180/Math.PI)).toFixed(1);
+            document.getElementById("multi_lat"+(i)).innerHTML =change_lat_point;
+                forked=0;
+        }
+
+}
+
+function fork() {
+    if (forked==0) {
+        for (i=2;i<=counter;i++){
+            var ctc = parseFloat(document.getElementById("c_true_course"+(i)).innerHTML);
+            var orgn_mc = parseFloat(document.getElementById("mag_course"+(i)).innerHTML);
+            var amv = parseFloat(document.getElementById("amv").value);
+            var dmv = parseFloat(document.getElementById("dmv").value);
+            var last_atw = atw[atw.length-1];
+            var last_aer = aer[aer.length-1];
+            var last_aln = aln[aln.length-1];
+            var fork_ctc = ((ctc - last_atw -last_aer - last_aln)+360)%360;
+            var fork_mc = (fork_ctc + amv + 360)%360;
+
+            var diff_mc = -last_atw -last_aer - last_aln - dmv + amv;
+            document.getElementById("c_true_course"+(i)).innerHTML = fork_ctc.toFixed(1);
+            document.getElementById("mag_course"+(i)).innerHTML = parseFloat(fork_mc).toFixed(1);
+            document.getElementById("diffmc").innerHTML = "(Before descending, adjust the gyro by plus or minus this degree number: "+parseFloat(diff_mc).toFixed(1)+")";
+        forked=1;
+        }
+
+    transport_wander = [0,0];
+    earth_rate_array =[0,0];
+    lat_nut_array = [0,0];
+    atw = [0,0];
+    aer = [0,0];
+    aln = [0,0];
+    }
+}
+
+function unitChange() {
+    var imperial = document.getElementById("imperial-units");
+    for (i=2;i<=counter;i++){
+        if (imperial.checked) {
+            document.getElementById("unit-s"+(i)).innerHTML = " nm";
+            document.getElementById("unit-gs"+(i)).innerHTML = " knots";
+        } else {
+            document.getElementById("unit-s"+(i)).innerHTML = " km";
+            document.getElementById("unit-gs"+(i)).innerHTML = " km/h";
+        }
+    }
+}
+</script>
+<h1>Long Distance Dead-reckoning Calculator</h1>
+  <div id="dynamicInput">
+    Departure Mag Var: <input type="text" id="dmv"> Dest Mag Var: <input type="text" id="amv"> <input type="checkbox" id="imperial-units" name="imperial-units" value="imperial-nits" onclick="unitChange()"/>Imperial <input type="checkbox" id="multi-lat-nut-check" onclick="multiLatNut()"/>Adjust lat nut<br><br>
+    Way Point 1<br>Lat: <input type="text" id="lat1"> Lon: <input type="text" id="lon1">
+  </div>
+  <input type="button" value="Add Way Point" onClick="addInput('dynamicInput');"> <input type="button" value="Delete Way Point"  onclick="delPoint();"> <input type="button" value="Calculate!"  onclick="cal();"> <input id="forkbutton" type="button" value="Fork"  onclick="fork();"></input> <span id="diffmc"></span>
+</html>
+
+    
