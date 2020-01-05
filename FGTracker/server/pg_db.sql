@@ -314,7 +314,7 @@ ALTER SEQUENCE airports_id_seq OWNED BY airports.id;
 
 
 --
--- Name: bloat; Type: VIEW; Schema: public; Owner: hazuki
+-- Name: bloat; Type: VIEW; Schema: public; Owner: fgtracker
 --
 
 CREATE VIEW bloat AS
@@ -414,7 +414,7 @@ END AS ma
         END DESC;
 
 
-ALTER TABLE bloat OWNER TO hazuki;
+ALTER TABLE bloat OWNER TO fgtracker;
 
 --
 -- Name: cache_time; Type: TABLE; Schema: public; Owner: fgtracker; Tablespace: 
@@ -834,7 +834,7 @@ CREATE TABLE pilot_request (
 ALTER TABLE pilot_request OWNER TO fgtracker;
 
 --
--- Name: psql_applist; Type: VIEW; Schema: public; Owner: hazuki
+-- Name: psql_applist; Type: VIEW; Schema: public; Owner: fgtracker
 --
 
 CREATE VIEW psql_applist AS
@@ -848,7 +848,7 @@ CREATE VIEW psql_applist AS
    FROM pg_stat_activity;
 
 
-ALTER TABLE psql_applist OWNER TO hazuki;
+ALTER TABLE psql_applist OWNER TO fgtracker;
 
 --
 -- Name: route_points; Type: TABLE; Schema: public; Owner: fgtracker; Tablespace: 
@@ -1061,7 +1061,7 @@ UNION ALL
 ALTER TABLE waypoints_all OWNER TO fgtracker;
 
 --
--- Name: waypoints_bkup; Type: TABLE; Schema: public; Owner: hazuki; Tablespace: 
+-- Name: waypoints_bkup; Type: TABLE; Schema: public; Owner: fgtracker; Tablespace: 
 --
 
 CREATE TABLE waypoints_bkup (
@@ -1075,10 +1075,10 @@ CREATE TABLE waypoints_bkup (
 );
 
 
-ALTER TABLE waypoints_bkup OWNER TO hazuki;
+ALTER TABLE waypoints_bkup OWNER TO fgtracker;
 
 --
--- Name: waypoints_id_restruct; Type: TABLE; Schema: public; Owner: hazuki; Tablespace: 
+-- Name: waypoints_id_restruct; Type: TABLE; Schema: public; Owner: fgtracker; Tablespace: 
 --
 
 CREATE TABLE waypoints_id_restruct (
@@ -1087,10 +1087,10 @@ CREATE TABLE waypoints_id_restruct (
 );
 
 
-ALTER TABLE waypoints_id_restruct OWNER TO hazuki;
+ALTER TABLE waypoints_id_restruct OWNER TO fgtracker;
 
 --
--- Name: waypoints_id_restruct_id_seq; Type: SEQUENCE; Schema: public; Owner: hazuki
+-- Name: waypoints_id_restruct_id_seq; Type: SEQUENCE; Schema: public; Owner: fgtracker
 --
 
 CREATE SEQUENCE waypoints_id_restruct_id_seq
@@ -1101,10 +1101,10 @@ CREATE SEQUENCE waypoints_id_restruct_id_seq
     CACHE 1;
 
 
-ALTER TABLE waypoints_id_restruct_id_seq OWNER TO hazuki;
+ALTER TABLE waypoints_id_restruct_id_seq OWNER TO fgtracker;
 
 --
--- Name: waypoints_id_restruct_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: hazuki
+-- Name: waypoints_id_restruct_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: fgtracker
 --
 
 ALTER SEQUENCE waypoints_id_restruct_id_seq OWNED BY waypoints_id_restruct.id;
@@ -1144,7 +1144,7 @@ CREATE VIEW waypoints_last_month AS
 ALTER TABLE waypoints_last_month OWNER TO fgtracker;
 
 --
--- Name: x_temp_missing_flightid; Type: TABLE; Schema: public; Owner: hazuki; Tablespace: 
+-- Name: x_temp_missing_flightid; Type: TABLE; Schema: public; Owner: fgtracker; Tablespace: 
 --
 
 CREATE TABLE x_temp_missing_flightid (
@@ -1153,7 +1153,7 @@ CREATE TABLE x_temp_missing_flightid (
 );
 
 
-ALTER TABLE x_temp_missing_flightid OWNER TO hazuki;
+ALTER TABLE x_temp_missing_flightid OWNER TO fgtracker;
 
 --
 -- Name: id; Type: DEFAULT; Schema: public; Owner: fgtracker
@@ -1205,7 +1205,7 @@ ALTER TABLE ONLY waypoints ALTER COLUMN id SET DEFAULT nextval('waypoints_id_seq
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: hazuki
+-- Name: id; Type: DEFAULT; Schema: public; Owner: fgtracker
 --
 
 ALTER TABLE ONLY waypoints_id_restruct ALTER COLUMN id SET DEFAULT nextval('waypoints_id_restruct_id_seq'::regclass);
@@ -1300,7 +1300,7 @@ ALTER TABLE ONLY waypoints_archive
 
 
 --
--- Name: waypoints_id_restruct_pkey; Type: CONSTRAINT; Schema: public; Owner: hazuki; Tablespace: 
+-- Name: waypoints_id_restruct_pkey; Type: CONSTRAINT; Schema: public; Owner: fgtracker; Tablespace: 
 --
 
 ALTER TABLE ONLY waypoints_id_restruct
@@ -1477,7 +1477,7 @@ CREATE INDEX "waypoints_archive-flight_id-idx" ON waypoints_archive USING btree 
 
 
 --
--- Name: waypoints_id_restruct_old_id-index; Type: INDEX; Schema: public; Owner: hazuki; Tablespace: 
+-- Name: waypoints_id_restruct_old_id-index; Type: INDEX; Schema: public; Owner: fgtracker; Tablespace: 
 --
 
 CREATE INDEX "waypoints_id_restruct_old_id-index" ON waypoints_id_restruct USING btree (old_id);
@@ -1548,7 +1548,7 @@ GRANT ALL ON TABLE flights TO fgtracker;
 REVOKE ALL ON TABLE log FROM PUBLIC;
 REVOKE ALL ON TABLE log FROM fgtracker;
 GRANT ALL ON TABLE log TO fgtracker;
-GRANT ALL ON TABLE log TO hazuki WITH GRANT OPTION;
+GRANT ALL ON TABLE log TO fgtracker WITH GRANT OPTION;
 
 
 --
@@ -1633,22 +1633,22 @@ GRANT ALL ON TABLE waypoints TO fgtracker;
 
 
 --
--- Name: waypoints_id_restruct; Type: ACL; Schema: public; Owner: hazuki
+-- Name: waypoints_id_restruct; Type: ACL; Schema: public; Owner: fgtracker
 --
 
 REVOKE ALL ON TABLE waypoints_id_restruct FROM PUBLIC;
-REVOKE ALL ON TABLE waypoints_id_restruct FROM hazuki;
-GRANT ALL ON TABLE waypoints_id_restruct TO hazuki;
+REVOKE ALL ON TABLE waypoints_id_restruct FROM fgtracker;
+GRANT ALL ON TABLE waypoints_id_restruct TO fgtracker;
 GRANT ALL ON TABLE waypoints_id_restruct TO fgtracker;
 
 
 --
--- Name: waypoints_id_restruct_id_seq; Type: ACL; Schema: public; Owner: hazuki
+-- Name: waypoints_id_restruct_id_seq; Type: ACL; Schema: public; Owner: fgtracker
 --
 
 REVOKE ALL ON SEQUENCE waypoints_id_restruct_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE waypoints_id_restruct_id_seq FROM hazuki;
-GRANT ALL ON SEQUENCE waypoints_id_restruct_id_seq TO hazuki;
+REVOKE ALL ON SEQUENCE waypoints_id_restruct_id_seq FROM fgtracker;
+GRANT ALL ON SEQUENCE waypoints_id_restruct_id_seq TO fgtracker;
 GRANT ALL ON SEQUENCE waypoints_id_restruct_id_seq TO fgtracker;
 
 
