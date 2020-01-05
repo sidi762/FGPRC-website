@@ -29,7 +29,7 @@
 					function changeImage() {
             var header=document.getElementById("defaultcss");
             var allImages = new Array("default.css", "defaultbg2.css", "defaultbg3.css", "defaultbg4.css", "defaultbg5.css");
-          	header.setAttribute("href", allImages[Math.round(Math.random())]);
+          	header.setAttribute("href", allImages[Math.round(5 * Math.random())]);
           }
           changeImage();
          
